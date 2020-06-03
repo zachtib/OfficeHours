@@ -1,3 +1,8 @@
 from django.contrib import admin
+from timeslots.models import TimeSlot
 
-# Register your models here.
+
+@admin.register(TimeSlot)
+class TimeSlotAdmin(admin.ModelAdmin):
+    pass
+
