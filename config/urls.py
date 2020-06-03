@@ -16,9 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from timeslots.views import home
+from timeslots.views import home, reserve
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home),
+    path('reserve/<str:timeslot_id>', reserve),
 ]
