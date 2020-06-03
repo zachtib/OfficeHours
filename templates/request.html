@@ -3,15 +3,13 @@
 
 {% block content %}
     <div class="container">
-    <div class="row">
-        <div class="col-lg-8 center-block">
-            <form method="post" action="">
-                {% csrf_token %}
-                {% crispy request_form %}
-                <button class="btn btn-primary" type="submit">Submit</button>
-            </form>
+        <div class="row">
+            <div class="col-lg-8 center-block">
+                <form action="" method="post">
+                    {% crispy request_form %}
+                </form>
+            </div>
         </div>
-    </div>
     </div>
 
 {% endblock %}

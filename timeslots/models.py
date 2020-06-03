@@ -10,10 +10,11 @@ class TimeSlotManager(models.Manager):
         now = datetime.now()
         self.filter(
             status=TimeSlot.Status.PENDING,
-            pending_until__lt=now
+            pending_until__lt=now,
         ).update(
             status=TimeSlot.Status.AVAILABLE,
-            pending_until=None
+            pending_until=None,
+            session_key=None,
         )
 
     def all_future(self):
@@ -50,7 +51,8 @@ class TimeSlot(models.Model):
     end_time = models.TimeField()
 
     status = models.TextField(max_length=1, choices=Status.choices, default=Status.AVAILABLE)
-    pending_until = models.DateTimeField(null=True, default=None, editable=False)
+    pending_until = models.DateTimeField(null=True, default=None)
+    session_key = models.CharField(max_length=32, null=True, default=None)
 
     name = models.CharField(max_length=254, null=True, blank=True, default=None)
     email_address = models.EmailField(null=True, blank=True, default=None)
@@ -61,8 +63,22 @@ class TimeSlot(models.Model):
     def format_range(self):
         return f'{self.begin_time} - {self.end_time}'
 
-    def set_pending(self):
-        expiration_time = datetime.now() + timedelta(minutes=20)
-
-        self.pending_until = expiration_time
-        self.status = TimeSlot.Status.PENDING
+    def get_reservation(self, session):
+        if session.session_key is None:
+            session.save()
+        session_key = session.session_key
+        print(f'Trying to reserve {self.id} for session {session_key}')
+        if self.session_key == session_key:
+            print('User already had reservation')
+            return True
+        elif self.session_key is None:
+            print('Creating reservation')
+            expiration_time = datetime.now() + timedelta(minutes=20)
+            self.pending_until = expiration_time
+            self.status = TimeSlot.Status.PENDING
+            self.session_key = session_key
+            self.save()
+            return True
+        else:
+            print('Unable to create reservation')
+            return False
