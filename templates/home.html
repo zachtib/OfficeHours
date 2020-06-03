@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+    <div class="row">
+        <div class="col-lg-6 center-block">
+            {% for key, values in times_by_date.items %}
+                <p>{{ key }}</p>
+                {% for item in values %}
+                    <p>
+                        <a class="btn btn-primary" href="#" role="button">{{ item.format_range }}</a>
+                    </p>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+    </div>
+
+{% endblock %}
